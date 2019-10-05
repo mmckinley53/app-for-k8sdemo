@@ -227,7 +227,18 @@ remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
 To https://github.com/mmckinley53/app-for-k8sdemo.git
    15f6b2e..ff56f82  master -> master
 
+/*========================================================================
+/* Now the application is on the remote repository and is available for cloning
+/* To clone, just navigate to an appropriate location for the folder and execute:
+/* the command that is listed on the repository web page
+PS> cd /users/mmckinley
+PS> git clone https://github.com/mmckinley53/app-for-k8sdemo.git
 
+/* Navigate to new folder and verify folder contents match 
+PS> cd /users/mmckinley/app-for-k8sdemo.git
+
+/* To pull down all changes from the remote repository:
+PS> git pull
 
 
 
