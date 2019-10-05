@@ -187,7 +187,50 @@ Fast-forward
  dir2/app.js           |   2 +-
  2 files changed, 77 insertions(+), 32 deletions(-)
 
- 
+/*==========================================================================
+/* Remote repository
+/* Use the browser to create a new repository on your github account
+/* Follow the instructions on the screen: " ...or push and existing repository from the command line
+/*      git remote add origin https://github.com/mmckinley53/app-for-k8sdemo.git
+/*      git push -u origin master
+PS> git remote add origin https://github.com/mmckinley53/app-for-k8sdemo.git
+PS> git push -u origin master
+Enumerating objects: 419, done.
+Counting objects: 100% (419/419), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (404/404), done.
+Writing objects: 100% (419/419), 566.15 KiB | 2.77 MiB/s, done.
+Total 419 (delta 82), reused 0 (delta 0)
+remote: Resolving deltas: 100% (82/82), done.
+To https://github.com/mmckinley53/app-for-k8sdemo.git
+ * [new branch]      master -> master
+Branch 'master' set up to track remote branch 'master' from 'origin'.
+
+/* Now you may view your files on the github repository using the browser
+/* Just click the reload button on the browser
+
+/* To update a file and push it to the remote repository
+/* First make a change in one of the files (e.g., README.md)
+/* Then 1) Add, 2) Commit, 3) Push
+PS> git add .
+PS> git commit -m 'Changes to README.md'
+[master ff56f82] update readme
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+PS> git push
+Enumerating objects: 5, done.
+Counting objects: 100% (5/5), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 326 bytes | 326.00 KiB/s, done.
+Total 3 (delta 2), reused 0 (delta 0)
+remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
+To https://github.com/mmckinley53/app-for-k8sdemo.git
+   15f6b2e..ff56f82  master -> master
+
+
+
+
+
 
 
 
