@@ -78,15 +78,38 @@ PS: docker pull
 /* Git hub stuff for developers
 /* Create a local repository 
 PS: cd /users/mmckinley/K8SDemo/apps/amf /* cd to local source code folder
-PS: git init  /* create local repository
+PS: git init                    /* create local repository
 PS: git config --global user.name 'Mike McKinley'
 PS: git config --global user.email 'mmckinle80@yahoo.com'
-PS: git add Dockerfile /* put file into staging area
+PS: git add Dockerfile          /* put file into staging area
 PS: git status
 PS: git rm --cached Dockerfile /* removes file from staging area
-PS: git add *.yml /* add all yml files to staging area
-PS: git add . /* add ALL files to staging area
-PS: git status /* shows all files in the 'changes to be committed' status
+PS: git add *.yml               /* add all yml files to staging area
+PS: git add .                   /* add ALL files to staging area
+PS: git status                  /* shows all files in the 'changes to be committed' status
+/* Make a change in one of the files in the folder then display the status: 
+PS: git status 
+/* Git has detected the changes and issued a warning that there are "Changes not staged for commit" and must be added again
+/* To fix this issue, you must add the file(s) into the staging area again:
+PS: git add .                   /* add the files to the staging area including the modified file
+PS: git status                  /* shows that all files are ready to be committed.
+/* This command opens a vim editor to allow a comment to be inserted (see vim for instructions) 
+/* then commits the file(s) to the "local" repository
+PS: git commit   
+/* To prevent a file or a folder from being added to the staging area:
+/* 1. Create a file called .gitignore
+/* 2. Add the filename of the file that you want to ignore: log.txt
+/* 3. Add the directory names of the folders that you want to ignore: \dir1
+PS: git add .
+PS: git status                  /* notice that log.txt and \dir1 are not included in the list
+
+
+                                
+
+
+
+
+
 
 
 
