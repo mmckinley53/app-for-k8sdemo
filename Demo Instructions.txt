@@ -18,19 +18,19 @@
 /* 1st Section: Docker Ops Demo
 
 /* Get the docker version
-PS: docker -v
+PS> docker -v
 
 /* List the local Docker images
-PS: docker images
+PS> docker images
 
 /* Pull an images
-PS: docker container pull ubuntu:latest
+PS> docker container pull ubuntu:latest
 
 /* Check if the image has been downloaded
-PS: docker images
+PS> docker images
 
 /* Launch the container and run a command
-PS: docker exec -it ubunt:latest /bin/bash
+PS> docker exec -it ubunt:latest /bin/bash
 #
 
 /* From inside the container, run a command
@@ -38,27 +38,27 @@ PS: docker exec -it ubunt:latest /bin/bash
 
 /* Exit the container
 # exit
-PS: 
+PS> 
 
 /* List the running containers
-PS: docker container logs
+PS> docker container logs
 
 /* Attach to the running container
-PS: docker container exec -it <container id> /bin/bash
+PS> docker container exec -it <container id> /bin/bash
 #
 
 /* Exit the container
 # exit
-PS: 
+PS> 
 
 /* Stop the container
-PS: docker stop <container id>
+PS> docker stop <container id>
 
 /* See if the container is still there
-PS: docker container ls -a
+PS> docker container ls -a
 
 /* Kill the container
-PS: docker stop <container id>
+PS> docker stop <container id>
 
 /* Docker DEV demo
 
@@ -68,7 +68,7 @@ PS: docker stop <container id>
 /* Go back to Explore tab and search for Python and click on Official Image checkbox
 
 /* Pull a Docker image from Docker Hub
-PS: docker pull 
+PS> docker pull 
 
 
 
@@ -77,31 +77,76 @@ PS: docker pull
 
 /* Git hub stuff for developers
 /* Create a local repository 
-PS: cd /users/mmckinley/K8SDemo/apps/amf /* cd to local source code folder
-PS: git init                    /* create local repository
-PS: git config --global user.name 'Mike McKinley'
-PS: git config --global user.email 'mmckinle80@yahoo.com'
-PS: git add Dockerfile          /* put file into staging area
-PS: git status
-PS: git rm --cached Dockerfile /* removes file from staging area
-PS: git add *.yml               /* add all yml files to staging area
-PS: git add .                   /* add ALL files to staging area
-PS: git status                  /* shows all files in the 'changes to be committed' status
-/* Make a change in one of the files in the folder then display the status: 
-PS: git status 
+PS> cd /users/mmckinley/K8SDemo/apps/amf 
+PS> git init                    
+
+/* Configure your user name and email
+PS> git config --global user.name 'Mike McKinley'
+PS> git config --global user.email 'mmckinle80@yahoo.com'
+
+/* Put a file into the local staging area
+PS> git add Dockerfile 
+
+/* View status of the files in the local folder and sub-folders
+PS> git status
+
+/* Remove a file or folder from the staging area
+PS> git rm --cached Dockerfile
+
+/* Add all files of a certain extension to the staging area
+PS> git add *.yml           
+
+/* Recursively add all files in a folder and sub-folders into the staging area
+PS> git add .                   
+                
+/* As you make changes in files in the folder then git status shows 
+/* what branch you are on and what files have been modified and not staged for commit
+PS> git status 
+On branch mybranch
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   Demo Instructions.txt
+
+
 /* Git has detected the changes and issued a warning that there are "Changes not staged for commit" and must be added again
 /* To fix this issue, you must add the file(s) into the staging area again:
-PS: git add .                   /* add the files to the staging area including the modified file
-PS: git status                  /* shows that all files are ready to be committed.
+PS> git add .                   
+PS> git status                  
+
+/* Commit the files/folders in the staging area to the local repository
 /* This command opens a vim editor to allow a comment to be inserted (see vim for instructions) 
-/* then commits the file(s) to the "local" repository
-PS: git commit   
+/* then commits the file/folder(s) to the "local" repository
+PS> git commit   
+
+/* Alternate commit command that doesn't open the editor:
+PS> git commit -m 'change text'
+
+/* ".gitignore" file
 /* To prevent a file or a folder from being added to the staging area:
 /* 1. Create a file called .gitignore
 /* 2. Add the filename of the file that you want to ignore: log.txt
 /* 3. Add the directory names of the folders that you want to ignore: \dir1
-PS: git add .
-PS: git status                  /* notice that log.txt and \dir1 are not included in the list
+PS> git add .
+PS> git status                  /* notice that log.txt and \dir1 are not included in the list
+
+/* BRANCHES: To make changes to your code that don't affect the main code base: 
+/* Create a branch!
+PS C:\Users\mmckinley\K8sDemo\apps\amf> git branch mybranch
+
+/* Note that after we create the branch (PS> git branch mybranch) we are still "on branch master"
+PS C:\Users\mmckinley\K8sDemo\apps\amf> git status
+On branch master
+nothing to commit, working tree clean
+
+/* To switch to our own branch:
+PS C:\Users\mmckinley\K8sDemo\apps\amf> git checkout mybranch
+Switched to branch 'mybranch'
+PS C:\Users\mmckinley\K8sDemo\apps\amf> git status
+On branch mybranch
+nothing to commit, working tree clean
+
+
 
 
                                 
