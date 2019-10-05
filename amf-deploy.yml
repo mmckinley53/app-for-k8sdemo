@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment  # Type of Object being deployed
+metadata:
+  name: amf-deploy  # Deployment name
+spec:
+  replicas: 3   # Pod replica count used by replica controller
+  selector:
+    matchLabels:
+      app: amf  # Controllers will match pods with this Label
+  minReadySeconds: 10
+  strategy:
+    type: RollingUpdate  # Type of Update strategy
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata: 
+      labels:
+        app: amf  # Pod Label
+    spec:
+      containers:
+      - name: amf-ctr   # Container Name
+        image: amf-ctr:1.0
+        ports:
+        - containerPort: 8080
