@@ -1,4 +1,4 @@
-# Test app for demonstrating containerizing web app
+# Test node js app to demo Docker containers and Kubernetes
 
 Super-simple Node web app for containerization demos
 
