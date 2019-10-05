@@ -1,0 +1,98 @@
+/* Instructor Tools 
+1. Docker For Windows w/ Kubernetes enabled
+2. Docker Hub account
+3. Visual Studio Code (IDE)
+4. cmder (Command Window)
+
+/* To see a window with 3 horizontal cmder terminals:
+1. Start cmder in administrative mode (start, type in 'cmder', search displays cmder icon, right click on cmder icon, select "Run as administrator")
+2. Click on Cmder icon upper left corner of terminal. 
+3. From pull-down menu select "Active Console":"Restart or Duplicate":"Split to Bottom"
+4. To start Powershell in one of the terminals just type "powershell" at the cmder prompt (lamba)
+
+/* Docker exercise
+1. Open a terminal emulator (e.g., CMD, Powershell, cmder, etc.)
+2. cd /user/<username>/K8SDemo/app/amf 
+
+
+/* 1st Section: Docker Ops Demo
+
+/* Get the docker version
+PS: docker -v
+
+/* List the local Docker images
+PS: docker images
+
+/* Pull an images
+PS: docker container pull ubuntu:latest
+
+/* Check if the image has been downloaded
+PS: docker images
+
+/* Launch the container and run a command
+PS: docker exec -it ubunt:latest /bin/bash
+#
+
+/* From inside the container, run a command
+# ping 8.8.8.8
+
+/* Exit the container
+# exit
+PS: 
+
+/* List the running containers
+PS: docker container logs
+
+/* Attach to the running container
+PS: docker container exec -it <container id> /bin/bash
+#
+
+/* Exit the container
+# exit
+PS: 
+
+/* Stop the container
+PS: docker stop <container id>
+
+/* See if the container is still there
+PS: docker container ls -a
+
+/* Kill the container
+PS: docker stop <container id>
+
+/* Docker DEV demo
+
+/* Open a browser and introduce Docker Hub:
+/* Use browser to navigate to your Docker Hub repository (e.g., mmckinley5712/amf-ctr)
+/* Click Explore tab to search for enodeb: select raraya - not much description
+/* Go back to Explore tab and search for Python and click on Official Image checkbox
+
+/* Pull a Docker image from Docker Hub
+PS: docker pull 
+
+
+
+
+
+
+/* Git hub stuff for developers
+/* Create a local repository 
+PS: cd /users/mmckinley/K8SDemo/apps/amf /* cd to local source code folder
+PS: git init  /* create local repository
+PS: git config --global user.name 'Mike McKinley'
+PS: git config --global user.email 'mmckinle80@yahoo.com'
+PS: git add Dockerfile /* put file into staging area
+PS: git status
+PS: git rm --cached Dockerfile /* removes file from staging area
+PS: git add *.yml /* add all yml files to staging area
+PS: git add . /* add ALL files to staging area
+PS: git status /* shows all files in the 'changes to be committed' status
+
+
+
+/* To run a command continuously from one of the terminal windows in cmder:
+while(1){ kubectl get pods;start-sleep -seconds 2;clear }
+
+while(1){ curl 192.168.0.146:30002/api/hostname;start-sleep -seconds 2;clear }
+
+while(1){ kubectl logs --selector app=amf ;start-sleep -seconds 2;clear }
