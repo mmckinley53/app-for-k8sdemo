@@ -19,7 +19,7 @@ Perform Kubernetes exercises found in Demo Instructions.txt
 4. Visual Studio Code (IDE)
 5. Terminal Emulator besides CMD (e.g., cmder, MobiXterm, etc.)
 
-
+ 
 /* Optional: To see a window with 3 horizontal cmder terminals:
 1. Start cmder in administrative mode (start, type in 'cmder', search displays cmder icon, right click on cmder icon, select "Run as administrator")
 2. Click on Cmder icon upper left corner of terminal. 
