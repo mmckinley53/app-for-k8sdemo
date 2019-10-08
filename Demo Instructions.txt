@@ -11,7 +11,6 @@ Make any corrections, Build, test until good
 Push image to container registry
 Perform Kubernetes exercises found in Demo Instructions.txt
 
-
 /* Suggested Instructor Tools 
 1. Docker For Windows w/ Kubernetes enabled
 2. github account
@@ -19,19 +18,36 @@ Perform Kubernetes exercises found in Demo Instructions.txt
 4. Visual Studio Code (IDE)
 5. Terminal Emulator besides CMD (e.g., cmder, MobiXterm, etc.)
 
- 
 /* Optional: To see a window with 3 horizontal cmder terminals:
 1. Start cmder in administrative mode (start, type in 'cmder', search displays cmder icon, right click on cmder icon, select "Run as administrator")
 2. Click on Cmder icon upper left corner of terminal. 
 3. From pull-down menu select "Active Console":"Restart or Duplicate":"Split to Bottom"
 4. To start Powershell in one of the terminals just type "powershell" at the cmder prompt (lamba)
 
-/* Open your favorite terminal emulator (e.g., CMD, Powershell, cmder, etc.)
-/* Navigate to a folder
+/* If you haven't already installed git then install it now:
+https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
+
+/* If you do not have an account with git, then create one at:
+https://github.com/
+
+/* If you need a little beginners tutorial on git, try these:
+https://www.youtube.com/watch?v=SWYqp7iY_Tc&list=PLD0Wopb2FC7rRWkDSZ0PhhbP5Z7NJ4mXT
+https://product.hubspot.com/blog/git-and-github-tutorial-for-beginners
+
+/* In your terminal emulator, navigate to a folder that you want your working folder
 PS> cd /user/<username> 
 
 /* Pull the example application folder from github
-PS> 
+/*  git clone is basically a combination of:
+/*  - git init (create the local repository)
+/*  - git remote add (add the URL to that repository)
+/*  - git fetch (fetch all branches from that URL to your local repository)
+/*  - git checkout (create all the files of the main branch in your working tree)
+PS> git clone https://github.com/mmckinley53/app-for-k8sdemo.git
+
+
+
+
 
 /* 1st Demo:
 /* Purpose: 
