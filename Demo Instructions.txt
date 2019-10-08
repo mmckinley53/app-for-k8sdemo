@@ -3,6 +3,15 @@ This is the demo preparation guide for the TP1025 Containers and Microservices i
 It is not intended that the SME perform all of the exercises in this demo during class.
 It is only intended to provide a guide for the SME to prepare for the Demo.
 
+/* General Instructions:
+Clone the repo locally 'git clone https://github.com/mmckinley53/app-for-k8sdemo.git'
+Build Docker iamge docker image build -t amf-ctr:1.0 . from within the root directory of the repo
+Perform Docker exercises found in Demo Instructions.txt
+Make any corrections, Build, test until good
+Push image to container registry
+Perform Kubernetes exercises found in Demo Instructions.txt
+
+
 /* Suggested Instructor Tools 
 1. Docker For Windows w/ Kubernetes enabled
 2. github account
