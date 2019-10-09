@@ -6,49 +6,64 @@ var express = require('express');
 
 const app = express();
 
+app.set('views', 'views');
+app.set('view engine', 'pug');
+
+var message1 = 'Hello World!'
+
 const COMPUTERNAME = process.env.COMPUTERNAME || process.env.HOSTNAME
 const PORT = process.env.PORT || 8080
 
-const members = [
+const UEcontexts= [
     {
         id: 1,
-        name: 'John Doe',
-        email: 'john@gmail.com',
-        status: 'active'
+        accesstype: 'non-3gpp',
+        rattype: 'E-UTRA',
+        currentplmn: '310-560',
+        registrationstate: 'Deregistered'
     },
     {
-        id: 1,
-        name: 'Mary Smith',
-        email: 'msmith@yahoo.com',
-        status: 'inactive'
+        id: 2,
+        accesstype: '3gpp',
+        rattype: 'NR',
+        currentplmn: '310-110',
+        registrationstate: 'registered'
     },
     {
-        id: 1,
-        name: 'Tom Jones',
-        email: 'tjones@gmail.com',
-        status: 'active'
+        id: 3,
+        accesstype: '3gpp',
+        rattype: 'E-UTRA',
+        currentplmn: '302-651',
+        registrationstate: 'Registered'
     }
 ]
 
-// Gets All Members
-app.get('/api/members',(req,res) => {
-    res.json(members);
-    console.log('Members Request');
+// Display message and computername to client and to log
+app.get('/', function(req, res) {
+    console.log(message1, COMPUTERNAME);
+    res.render('home.pug', { message1, COMPUTERNAME
+  });
 });
 
 // Send COMPUTERNAME TO STDOUT
-app.get('/',(req,res) => {
-    res.send('<h1>Hello World<\h1>');
-    console.log('/', 'Hostname is: ', {COMPUTERNAME});
-});
+//app.get('/',(req,res) => {
+//    console.log('Hello World');
+//    res.send('<h1>Hello World<\h1>'); 
+//});
 
 // Gets HOSTNAME/COMPUTERNAME
 app.get('/api/HOSTNAME',(req,res) => {
     res.json({COMPUTERNAME});
-    console.log('/api/hostname', 'Hostname is: ', {COMPUTERNAME} ) ;
+    console.log('Hostname: ', COMPUTERNAME) ;
+});
+
+// Gets All UEcontexts
+app.get('/api/UEcontexts',(req,res) => {
+    res.json(UEcontexts);
+    console.log('UEcontexts Request');
 });
 
 //app.listen(8080, () => console.log(process.env.COMPUTERNAME));
-app.listen(8080, () => console.log(COMPUTERNAME, 'Listening on Port:', PORT));
+app.listen(8080, () => console.log('Listening on Port:', PORT));
 
-//module.exports.getApp = app;
+module.exports.getApp = app;

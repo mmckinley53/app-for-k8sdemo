@@ -5,7 +5,7 @@ It is only intended to provide a guide for the SME to prepare for the Demo.
 
 /* General Instructions:
 Clone the repo locally 'git clone https://github.com/mmckinley53/app-for-k8sdemo.git'
-Build Docker iamge docker image build -t amf-ctr:1.0 . from within the root directory of the repo
+Build Docker image 'docker image build -t amf-ctr:1.0 .' from within the root directory of the repo
 Perform Docker exercises found in Demo Instructions.txt
 Make any corrections, Build, test until good
 Push image to container registry
@@ -45,13 +45,26 @@ PS> cd /user/<username>
 /*  - git checkout (create all the files of the main branch in your working tree)
 PS> git clone https://github.com/mmckinley53/app-for-k8sdemo.git
 
+/* Navigate to the new local repository and list the contents
+PS> cd C:\users\mmckinley\app-for-k8sdemo\
+PS> ls
 
+/* Display the app.js software and explain a little:
+/*  - on startup, write the hostname to the console 
+/*  - on receiving '/' URL then 
+/*        send 'Hello World' html, 
+/*        and write "Hostname is <Hostname>" to the console )
+/*  - on receiving '/api/hostname' URL then 
+/*        send '<Hostname>' html, 
+/*        and write "Hostname is <Hostname>" to the console )
+PS> cat app.js
 
-
-
-/* 1st Demo:
+/*========================================================================
+/* Docker Demo:
 /* Purpose: 
 /*    Illustrate use of Docker:
+/*      - Inspect the Dockerfile
+/*      - Containerize the app/build the image
 /*      - view the list of local docker images
 /*      - pull an existing docker container image from an external repository
 /*      - start it, 
@@ -60,76 +73,410 @@ PS> git clone https://github.com/mmckinley53/app-for-k8sdemo.git
 /*      - communicate to it from a browser,
 /*      - exit 
 /*      - list the running containers
-/*      - stop it
-/*      - remove it
-
-/* Steps: 
-
-
-
-/* 1st Section: Docker Ops Demo
+/*      - stop container
+/*      - remove container
 
 /* Get the docker version
 PS> docker -v
 
-/* List the local Docker images
+/* Inspect the Dockerfile
+PS> cat Docker
+
+/* View the local Docker images. Note: There are no amf-ctr images
 PS> docker images
 
-/* Pull an images
-PS> docker container pull ubuntu:latest
+/* Build an amf-ctr docker container
+PS> docker build -t amf-ctr:1.0 .
 
-/* Check if the image has been downloaded
+/* Display the images and verify that afm-ctr:1.0 has been created
 PS> docker images
 
-/* Run the container and start a bash shell
-PS> docker container run -it ubuntu:latest /bin/bash
+/* Run the container 
+docker run -d --name amf-ctr1 -p 80:8080 amf-ctr:1.0
 
-/* Launch the container and run a command
-PS> docker exec -it ubuntu:latest /bin/bash
-# 
+/* To see the console output we use the docker logs function
+/* Note to SME: This is best shown with 2 command windows: 
+/*   T1 for docker logs running continuously 
+/*   T2 for running the curl commands
+PST1> while(1){ docker logs amf-ctr -t;start-sleep -seconds 5;clear } 
 
-/* From inside the container, run a command
-# ping 8.8.8.8
+/* Test the container by entering these urls into a browser
+/* http://localhost:80/
+/* http://localhost:80/api/hostname
+/* http://localhost:80/api/UEcontexts
 
-/* Exit the container
-# exit
-PS> 
+/* Test the container by entering the urls into a command line on the host
+PS> curl http://localhost:80
+PS> curl http://localhost:80/api/hostname
+PS> curl http://localhost:80/api/UEcontexts
 
-/* List the running containers
-PS> docker container logs
+/* Attach to the running container and execute a local command
+PS> docker exec -it amf-ctr1 /bin/bash
+# ifconfig
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+inet 172.17.0.2  netmask 255.255.0.0  broadcast 172.17.255.255  
+ether 02:42:ac:11:00:02  txqueuelen 0  (Ethernet)
+....
 
-/* Attach to the running container
-PS> docker container exec -it <container id> /bin/bash
-#
+/* Examine the previous output and note the IP address
+/* If we create another docker container, it will be assigned another IP address.
+/* Incoming packets are routed to the host, not the container IP.
+/* Inside the host, the external IP and port is mapped to the internal IP and port (in this case 8080).
+/* The external ports must be unique or there will be a port mapping error
 
-/* Exit the container
-# exit
-PS> 
+/* Start another container with the same image.  
+/* Note the external port is different from the first one
+docker run -d --name amf-ctr2 -p 81:8080 amf-ctr:1.0
 
-/* Stop the container
-PS> docker stop <container id>
+/* Attach to the second container and run a shell command
+docker exec -it amf-ctr2 /bin/sh 
+# ifcontrol
 
-/* See if the container is still there
+/* Conduct tests between containers
+/* SME should setup two windows side by side 
+/*   - PST1 - attach to amf-ctr1
+/*   - PST2 - attach to amf-ctr2
+
+/* First curl to the other container using external port 80
+# curl http:192.168.0.146:80
+# curl http:192.168.0.146:80/api/hostname
+
+/* Then go to the other window and do the same but with port 81
+# curl http:192.168.0.146:80
+# curl http:192.168.0.146:80/api/hostname
+
+/* Use the browser to test the first container port 80
+/* Browse at http:192.168.0.146:80/api/hostname
+
+/* Use the browser to test the second container port 81
+/* Browse at http:192.168.0.146:81/api/hostname
+
+/* Exit both containers (not shown) and Stop both containers
+PS> docker stop amf-ctr1 amf-ctr2
+
+/* List the containers. Note that the containers are stopped but not removed
 PS> docker container ls -a
 
-/* Kill the container
-PS> docker stop <container id>
+/* Remove both containers
+PS> docker rm amf-ctr1 amf-ctr2
 
-/* Docker DEV demo
-
-/* Open a browser and introduce Docker Hub:
-/* Use browser to navigate to your Docker Hub repository (e.g., mmckinley5712/amf-ctr)
-/* Click Explore tab to search for enodeb: select raraya - not much description
-/* Go back to Explore tab and search for Python and click on Official Image checkbox
-
-/* Pull a Docker image from Docker Hub
-PS> docker pull 
+/* List the containers. Note that the containers are stopped and removed
+PS> docker container ls -a
 
 
+/*-----------------------------------------------------------------------------
+/* In this section, you will save tested image to the remote repository at Docker Hub
+
+/* Login to Docker Hub
+PS> docker login
+
+/* Tag the image with 1.0 and identify your repository 
+PS> docker image tag amf-ctr:1.0 mmckinley5712/amf-ctr:1.0
+
+/* Check to see that the image has been stored in the local repository with the new tag
+PS> docker images
+
+/* Store the image in Docker Hub
+PS> docker image push mmckinley5712/amf-ctr:1.0
+
+/* Verify the image has been stored in your repository via the Docker Hub website 
+/* Browse at https://hub.docker.com
+/* Navigate to mmckinley5712/amf-ctr. Verify 1.0 tag is available
+
+/*---------------------------------------------------------------------------
+/* In this section you will make changes and create a new version of the app.
+/* Then you will build a new image with the updates using a different tag
+/* Then you will test it and then push the new version to Docker Hub
+
+/* Make a minor change in the app.js file (e.g., Change "Hello World" to "Love Docker")
+/* Use your preferred editor to make the change in app.js
+
+/* Build the updated docker image with a new tag (e.g., 2.0)
+docker build -t amf-ctr:2.0 .
+
+/* Run the updated version with a different name, different port, different tag
+docker run -d --name amf-ctr2 -p 81:8080 amf-ctr:2.0
+
+/* Verify the changes are correct (browser displays "Enjoying Docker")
+/* Browse to http://localhost:81
+/* This should display "Enjoying Docker" on one line and the hostname below it
+/* In another Browser window, browse to http://localhost:80
+/* This should display "Hello World" on one line and the hostname below it
+/* Note the difference in hostname. This will be used in the kubernetes exercise
+
+/* After verification, stop and remove the updated containers
+/* Exit both containers (not shown) and Stop both containers
+PS> docker stop amf-ctr1 amf-ctr2
+
+/* List the containers. Note that the containers are stopped but not removed
+PS> docker container ls -a
+
+/* Remove both containers
+PS> docker rm amf-ctr1 amf-ctr2
+
+/* List the containers. Note that the containers are stopped and removed
+PS> docker container ls -a
+
+
+
+/*-----------------------------------------------------------------------------------
+/* In this section, you will save the updated image to the remote repository at Docker Hub
+
+/* Login to Docker Hub
+PS> docker login
+
+/* Verify that amf-ctr:2.0 is in the local repository
+PS> docker images
+
+/* Tag the image with 2.0 and identify your repository 
+PS> docker image tag amf-ctr:2.0 mmckinley5712/amf-ctr:2.0
+
+/* Check to see that the image has been stored in the local repository with the new tag
+PS> docker images
+
+/* Store the image in Docker Hub
+PS> docker image push mmckinley5712/amf-ctr:2.0
+
+/* Verify the image has been stored in your repository via the Docker Hub website 
+/* Browse at https://hub.docker.com
+/* Navigate to mmckinley5712/amf-ctr. Verify 2.0 tag is available
 
 
 
 
+
+
+/*=================================================================
+/* Kubernetes Demo Overview
+/* - Deploy a Pod and manage it
+/* - Deploy a Deployment and manage it
+/* - Illustrate Service
+/* - Illustrate Self-Healing
+/* - Illustrate Manual Scaling
+/* - Illustrate Rolling updates
+/* - Illustrate Rollback
+
+/*-----------------------------------------------------------
+/* Pods
+
+/* Display the pod manifest file
+PS> cat amf-pod.yml
+
+/* Create a pod
+PS> kubectl apply -f amf-pod.yml
+
+/* List the running Pods 
+PS> kubectl get pods
+
+/* List the running Pods with extra information including IP Address
+PS> kubectl get pods -o wide
+
+/* List a particular Pod
+PS> kubectl get pods amf-pod
+
+/* Describe the details of a pod
+PS> kubectl describe pod amf-pod
+
+/* Execute a command inside a Pod
+PS> kubectl exec amf-pod ifconfig
+
+/* Attach to the first container in a Pod and start a shell
+PS> kubectl exec -it amf-pod /bin/bash
+#
+
+/* Check Pod connectivity
+# curl localhost:8080
+# curl localhost:8080/api/hostname
+# curl localhost:8080/api/UEcontexts
+# cd src 
+# cat stdout.txt
+
+/* De-attach from the Pod
+# exit
+
+/* Delete the Pod
+kubectl delete pod amf-pod
+
+
+/*-------------------------------------------------------
+/* Deployments
+
+/* Display the deployment manifest file
+PS> cat amf-deploy.yml  /* or use editor to show file
+
+/* Create Deployment
+PS> kubectl apply -f .\amf-deploy.yml
+
+/* Display objects created by deploy
+PS> kubectl get all -o wide
+
+/* Illustrate Self-Healing with Deployments/Replications
+/* Delete one of the pods and observe that the pod is immediately replaced by another
+/* This is best illustrated with multiple terminals with one terminal 
+/* looping with the "get pods all -o wide' command and the other terminal doing the delete
+PST1> while(1){ kubectl get all -o wide;start-sleep -seconds 2;clear }
+PST2> kubectl delete pods --all
+/* Wait until all pods are terminated and replaced with new running pods
+
+/* Illustrate Scaling with Deployments/Replications
+/* - Continue to display the state of the objects
+/* - Edit the Deployments object and increment the 'replicas' count, save and close
+/* - Observe the increase in the number of replicas
+/* - To scale down, edit the Deployments object and decrement the replica count, save, and close
+
+/* Edit the Deployments object, and increment the replicas count, save, and close
+PST2> kubectl edit deployment amf-deploy
+
+/* Now show the connectivity failure between Pods when a Pod is destroyed:
+/* - Continue to display the state of the objects
+/* - Attach to one of the pods
+/* - Start send http requests to another pod using curl
+/* - Delete the target pod
+/* - Continue to send http requests until failure
+
+/* Attach to one of the pods
+PST3> kubectl exec -it <pod-name> /bin/bash
+# 
+
+/* Start sending http requests to another pod using curl
+# curl http://<IP Address of target pod>:8080
+
+/* Continue sending http requests as you delete the target pod
+PST2> kubectl delete pod <target pod>
+
+
+
+
+/*---------------------------------------------------------
+/* Service
+/* - Display Services manifest file
+/* - Create a Service
+/* - Illustrate connectivity, self-healing and load balancing between Pods
+/* - Illustrate connectivity, self-healing and load balancing for external clients
+
+/* Display the Services manifest file
+PST3> cat amf-svc.yml
+
+/* Create a Service with the selector (app:amf)
+PST3> kubectl apply -f .\amf-svc.yml
+
+/* Continuously display the state of all objects
+/* Note the new information in the Service object: Cluster-IP/Port and NodePort
+PST1> while(1){ kubectl get all -o wide;start-sleep -seconds 2;clear }
+
+
+/* Illustrate Load Balancing for Pod to Pod Communications
+/* - Send http messages from one pod to the Cluster-IP/Port from the service object
+/* - Send several messages repeatedly and notice that the hostname changes as a 
+/*   result of the random load-balancing provided by the Service
+
+/* Attach to a pod
+PST3> kubectl exec -it amf-deploy-76b99cdd5d-66sdj /bin/bash
+
+/* Repeatedly send http messages from the first pod to the Cluster-IP/Port 
+/* and observe the hostname changes randomly
+# curl <cluster-ip>:8080/api/hostname
+
+/* Illustrate load-balancing for external clients
+/* - Browse to http://localhost:<NodePort>/api/hostname, e.g., http://localhost:30002/api/hostname
+/* - Refresh about every 10 seconds and observe that the hostname is changing randomly
+/* - IMPORTANT - delay about 10 seconds between refreshes
+/* OR BETTER - use Postman with Temporary header 'Connection' = 'close' instead of 'keepalive
+
+
+
+/* Illustrate self-healing without downtime for Pod to Pod Communications
+/* - continue to display the state of the objects
+/* - attach to the first pod if you are not already attached 
+/* - continue to send http requests from the first pod to the Cluster-IP/Port
+/* - Delete all the other pods while continuing to send http messages from the first pod
+/* - Note that there are no failures as the new pods begin to replace the old
+PS> kubectl delete amf-deploy-76b99cdd5d-bmjxv amf-deploy-76b99cdd5d-frqnd amf-deploy-76b99cdd5d-pxg6k amf-deploy-76b99cdd5d-xb5kb
+
+/* Illustrate self-healing without downtime from an external client
+/* - Browse to http://localhost:<NodePort>/api/hostname, e.g., http://localhost:30002/api/hostname
+/* - Refresh about every 10 seconds and observe that the hostname is changing randomly
+/* OR BETTER - use Postman with Temporary header 'Connection' = 'close' instead of 'keepalive
+/* - Delete all the pods while sending http messages from the first pod
+/* - Note that there are no failures
+
+
+/* Illustrate Rolling Update with no downtime
+/* - Continue to display the state of the objects
+/* - Edit the Deployment object and change the version of the image to amf-ctr:2.0
+/* - Use the browser (or Postman) to verify the change at http://localhost:30002
+
+
+
+
+
+
+
+
+
+
+/* Show that you cannot ping to the pods directly from an external client using these addresses
+PS> ping 10.1.0.185
+
+/* Try to curl to the container - fails
+PS> curl http://localhost:80
+
+
+
+
+
+
+
+
+/*-------------------------------------------
+/* Pods
+/* - Display Pod manifest file
+/* - Create a pod
+/* - List running pods
+/* - List running pods with IP address info 
+/* - List a particular Pod
+/* - Describe a Pod
+/* - Execute commands in the container
+/* - Cleanup the Pod
+
+
+
+
+/*------------------------------------------
+/* Deployments
+/* - Display Deployment manifest file
+/* - Create a Deployment
+/* - Display the Deployment/Replications
+/* 
+
+
+
+
+/*------------------------------------------
+/* Self-Healing
+/* Illustrate Self-Healing
+
+/*------------------------------------------
+/* Scaling
+/* Illustrate Scaling
+
+/*-----------------------------------------
+/* Rolling updates
+/* Illustrate rolling updates
+
+/*-----------------------------------------
+/* Rollback
+/* Illustrate Rollback
+
+
+
+
+
+
+
+
+
+/*==============================================================
 /* Git hub stuff for developers
 
 /*-------------------------------------------------------
@@ -242,7 +589,7 @@ Fast-forward
  dir2/app.js           |   2 +-
  2 files changed, 77 insertions(+), 32 deletions(-)
 
-/*==========================================================================
+/*-----------------------------------------------------------------------------
 /* Remote repository
 /* Use the browser to create a new repository on your github account
 /* Follow the instructions on the screen: " ...or push and existing repository from the command line
@@ -282,7 +629,7 @@ remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
 To https://github.com/mmckinley53/app-for-k8sdemo.git
    15f6b2e..ff56f82  master -> master
 
-/*========================================================================
+/*-----------------------------------------------------------------------
 /* Now the application is on the remote repository and is available for cloning
 /* To clone, just navigate to an appropriate location for the folder and execute:
 /* the command that is listed on the repository web page
@@ -314,7 +661,8 @@ PS> git pull
 
 
 
-
+/*==========================================================================
+/* Some tips for display
 
 /* To run a command continuously from one of the terminal windows in cmder:
 while(1){ kubectl get pods;start-sleep -seconds 2;clear }
@@ -322,3 +670,10 @@ while(1){ kubectl get pods;start-sleep -seconds 2;clear }
 while(1){ curl 192.168.0.146:30002/api/hostname;start-sleep -seconds 2;clear }
 
 while(1){ kubectl logs --selector app=amf ;start-sleep -seconds 2;clear }
+
+/*=============================================================================
+/* Clean up
+
+/* Remove all dangling images
+PS> docker images -f "dangling=true"
+PS> docker rmi <list of dangling images>

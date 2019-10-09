@@ -6,6 +6,10 @@ LABEL MAINTAINER=mmckinle80@yahoo.com
 RUN yum -y update; yum clean all
 RUN yum -y install epel-release; yum clean all
 RUN yum -y install nodejs npm; yum clean all
+RUN yum -y install net-tools; yum clean all
+RUN yum -y install bind-utils; yum clean all
+
+
 
 # Copy source code to /src in container
 COPY . /src
@@ -17,4 +21,4 @@ RUN cd /src; npm install
 EXPOSE 8080
 
 # Run this command (starts the app) when the container starts
-CMD cd /src && node ./app.js
+CMD cd /src && node ./app.js > stdout.txt 2> stderr.txt
