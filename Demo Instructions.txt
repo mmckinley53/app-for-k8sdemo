@@ -34,17 +34,32 @@ https://github.com/
 https://www.youtube.com/watch?v=SWYqp7iY_Tc&list=PLD0Wopb2FC7rRWkDSZ0PhhbP5Z7NJ4mXT
 https://product.hubspot.com/blog/git-and-github-tutorial-for-beginners
 
-/* In your terminal emulator, navigate to a folder that you want your working folder
-PS> cd /user/<username> 
 
-/* Pull the example application folder from github
+
+
+/*=====================================================================
+/* Pull the application folder from the remotes source control (github)
+/* 
 /*  git clone is basically a combination of:
 /*  - git init (create the local repository)
 /*  - git remote add (add the URL to that repository)
 /*  - git fetch (fetch all branches from that URL to your local repository)
 /*  - git checkout (create all the files of the main branch in your working tree)
+
+
+/* In your terminal emulator, navigate to a folder that you want your working folder
+PS> cd /user/<username> 
+
+/* Pull the application folder from github
 PS> git clone https://github.com/mmckinley53/app-for-k8sdemo.git
 
+
+
+/***********************************************************************
+/* Docker Demo
+/*======================================================================
+/* Display the application
+/* 
 /* Navigate to the new local repository and list the contents
 PS> cd C:\users\mmckinley\app-for-k8sdemo\
 PS> ls
@@ -80,79 +95,70 @@ PS> cat app.js
 PS> docker -v
 
 /* Inspect the Dockerfile
-PS> cat Docker
+PS> cat Dockerfile
 
-/* View the local Docker images. Note: There are no amf-ctr images
+/* View the local Docker images. 
 PS> docker images
 
-/* Build an amf-ctr docker container
+/* Make a minor change and re-Build an amf-ctr:1.0 docker container
 PS> docker build -t amf-ctr:1.0 .
 
 /* Display the images and verify that afm-ctr:1.0 has been created
 PS> docker images
 
-/* Run the container 
-docker run -d --name amf-ctr1 -p 80:8080 amf-ctr:1.0
+/* Run the container and name it amf-ctr1
+PS> docker run -d --name amf-ctr1 -p 80:8080 amf-ctr:1.0
 
-/* To see the console output we use the docker logs function
-/* Note to SME: This is best shown with 2 command windows: 
-/*   T1 for docker logs running continuously 
-/*   T2 for running the curl commands
-PST1> while(1){ docker logs amf-ctr -t;start-sleep -seconds 5;clear } 
+/* Display the container
+PS> docker container ls -a
 
 /* Test the container by entering these urls into a browser
 /* http://localhost:80/
 /* http://localhost:80/api/hostname
 /* http://localhost:80/api/UEcontexts
 
-/* Test the container by entering the urls into a command line on the host
-PS> curl http://localhost:80
-PS> curl http://localhost:80/api/hostname
-PS> curl http://localhost:80/api/UEcontexts
+/* Test the container by entering the curl commands into a command line on the host
+PST2> curl http://localhost:80
+PST2> curl http://localhost:80/api/hostname
+PST2> curl http://localhost:80/api/UEcontexts
 
 /* Attach to the running container and execute a local command
-PS> docker exec -it amf-ctr1 /bin/bash
-# ifconfig
-eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
-inet 172.17.0.2  netmask 255.255.0.0  broadcast 172.17.255.255  
-ether 02:42:ac:11:00:02  txqueuelen 0  (Ethernet)
-....
+PST2> docker exec -it amf-ctr1 /bin/bash
+# echo $HOSTNAME
 
 /* Examine the previous output and note the IP address
 /* If we create another docker container, it will be assigned another IP address.
-/* Incoming packets are routed to the host, not the container IP.
+/* Note that incoming packets are routed to the host IP, not to the container IP.
 /* Inside the host, the external IP and port is mapped to the internal IP and port (in this case 8080).
 /* The external ports must be unique or there will be a port mapping error
 
 /* Start another container with the same image.  
 /* Note the external port is different from the first one
-docker run -d --name amf-ctr2 -p 81:8080 amf-ctr:1.0
+PST3> docker run -d --name amf-ctr2 -p 81:8080 amf-ctr:1.0
 
 /* Attach to the second container and run a shell command
-docker exec -it amf-ctr2 /bin/sh 
-# ifcontrol
+PS> docker exec -it amf-ctr2 /bin/sh 
+# echo $HOSTNAME 
 
 /* Conduct tests between containers
-/* SME should setup two windows side by side 
-/*   - PST1 - attach to amf-ctr1
-/*   - PST2 - attach to amf-ctr2
+/* SME should setup two windows
+/*   - PST2 - attach to amf-ctr1
+/*   - PST3 - attach to amf-ctr2
 
-/* First curl to the other container using external port 80
-# curl http:192.168.0.146:80
-# curl http:192.168.0.146:80/api/hostname
+/* From amf-ctr1 in PST2 curl to amf-ctr2 using host IP, port 80
+# curl http://192.168.0.146:81
 
-/* Then go to the other window and do the same but with port 81
-# curl http:192.168.0.146:80
-# curl http:192.168.0.146:80/api/hostname
+/* From PST3 curl to amf-ctr1 using host IP, port 81
+# curl http://192.168.0.146:80
 
 /* Use the browser to test the first container port 80
-/* Browse at http:192.168.0.146:80/api/hostname
+/* Browse at http://192.168.0.146:80
 
 /* Use the browser to test the second container port 81
-/* Browse at http:192.168.0.146:81/api/hostname
+/* Browse at http://192.168.0.146:81
 
 /* Exit both containers (not shown) and Stop both containers
-PS> docker stop amf-ctr1 amf-ctr2
+PST2> docker stop amf-ctr1 amf-ctr2
 
 /* List the containers. Note that the containers are stopped but not removed
 PS> docker container ls -a
@@ -164,8 +170,8 @@ PS> docker rm amf-ctr1 amf-ctr2
 PS> docker container ls -a
 
 
-/*-----------------------------------------------------------------------------
-/* In this section, you will save tested image to the remote repository at Docker Hub
+/*==================================================================================
+/* In this section, you will save tested amf-ctr1 image to the remote repository at Docker Hub
 
 /* Login to Docker Hub
 PS> docker login
@@ -181,25 +187,32 @@ PS> docker image push mmckinley5712/amf-ctr:1.0
 
 /* Verify the image has been stored in your repository via the Docker Hub website 
 /* Browse at https://hub.docker.com
-/* Navigate to mmckinley5712/amf-ctr. Verify 1.0 tag is available
+/* Navigate to mmckinley5712/amf-ctr. Verify 1.0 tag is available and is current
 
-/*---------------------------------------------------------------------------
-/* In this section you will make changes and create a new version of the app.
-/* Then you will build a new image with the updates using a different tag
-/* Then you will test it and then push the new version to Docker Hub
+/*===================================================================================
+/* In this section you will update the app.
+/* Then you will build a new image with the updates using a different tag.
+/* Then you will test it and then push the new version amf-ctr:2.0 to Docker Hub.
 
 /* Make a minor change in the app.js file (e.g., Change "Hello World" to "Love Docker")
 /* Use your preferred editor to make the change in app.js
 
 /* Build the updated docker image with a new tag (e.g., 2.0)
-docker build -t amf-ctr:2.0 .
+PS> docker build -t amf-ctr:2.0 .
 
-/* Run the updated version with a different name, different port, different tag
-docker run -d --name amf-ctr2 -p 81:8080 amf-ctr:2.0
+/* Verify that the local image has been built
+PS> docker images
 
-/* Verify the changes are correct (browser displays "Enjoying Docker")
+/* Run the updated version and use name amf-ctr2, port 81, image amf-ctr:2.0
+PS> docker run -d --name amf-ctr2 -p 81:8080 amf-ctr:2.0
+
+/* Verify the changes are correct (browser displays "Love Docker")
 /* Browse to http://localhost:81
-/* This should display "Enjoying Docker" on one line and the hostname below it
+/* This should display "Love Docker" on one line and the hostname below it
+
+/* Start amf-ctr:1.0 and use name amf-ctr1, port 80, image amf-ctr:1.0
+PS> docker run -d --name amf-ctr1 -p 80:8080 amf-ctr:1.0
+
 /* In another Browser window, browse to http://localhost:80
 /* This should display "Hello World" on one line and the hostname below it
 /* Note the difference in hostname. This will be used in the kubernetes exercise
@@ -220,7 +233,8 @@ PS> docker container ls -a
 
 
 /*-----------------------------------------------------------------------------------
-/* In this section, you will save the updated image to the remote repository at Docker Hub
+/* For the Demo, this is OPTIONAL - Only do this if there is available time
+/* In this section, you will save the updated image amf-ctr:2.0 to the remote repository at Docker Hub
 
 /* Login to Docker Hub
 PS> docker login
@@ -250,7 +264,7 @@ PS> docker image push mmckinley5712/amf-ctr:2.0
 /* Kubernetes Demo Overview
 /* - Deploy a Pod and manage it
 /* - Deploy a Deployment and manage it
-/* - Illustrate Service
+/* - Illustrate the use of Services
 /* - Illustrate Self-Healing
 /* - Illustrate Manual Scaling
 /* - Illustrate Rolling updates
@@ -295,7 +309,7 @@ PS> kubectl exec -it amf-pod /bin/bash
 # exit
 
 /* Delete the Pod
-kubectl delete pod amf-pod
+PS> kubectl delete pod amf-pod
 
 
 /*-------------------------------------------------------
@@ -304,17 +318,17 @@ kubectl delete pod amf-pod
 /* Display the deployment manifest file
 PS> cat amf-deploy.yml  /* or use editor to show file
 
-/* Create Deployment
-PS> kubectl apply -f .\amf-deploy.yml
+/* Monitor the deployment
+PST1> while(1){ kubectl get all -o wide;start-sleep -seconds 2;clear }
 
-/* Display objects created by deploy
-PS> kubectl get all -o wide
+/* Create Deployment
+PST2> kubectl apply -f .\amf-deploy.yml
 
 /* Illustrate Self-Healing with Deployments/Replications
 /* Delete one of the pods and observe that the pod is immediately replaced by another
 /* This is best illustrated with multiple terminals with one terminal 
 /* looping with the "get pods all -o wide' command and the other terminal doing the delete
-PST1> while(1){ kubectl get all -o wide;start-sleep -seconds 2;clear }
+
 PST2> kubectl delete pods --all
 /* Wait until all pods are terminated and replaced with new running pods
 
@@ -355,7 +369,7 @@ PST2> kubectl delete pod <target pod>
 /* - Illustrate connectivity, self-healing and load balancing for external clients
 
 /* Display the Services manifest file
-PST3> cat amf-svc.yml
+PST3> cat amf-svc.yml  /* or display with your editor
 
 /* Create a Service with the selector (app:amf)
 PST3> kubectl apply -f .\amf-svc.yml
@@ -375,23 +389,23 @@ PST3> kubectl exec -it amf-deploy-76b99cdd5d-66sdj /bin/bash
 
 /* Repeatedly send http messages from the first pod to the Cluster-IP/Port 
 /* and observe the hostname changes randomly
-# curl <cluster-ip>:8080/api/hostname
+# curl <cluster-ip>:8080
 
 /* Illustrate load-balancing for external clients
-/* - Browse to http://localhost:<NodePort>/api/hostname, e.g., http://localhost:30002/api/hostname
-/* - Refresh about every 10 seconds and observe that the hostname is changing randomly
-/* - IMPORTANT - delay about 10 seconds between refreshes
-/* OR BETTER - use Postman with Temporary header 'Connection' = 'close' instead of 'keepalive
+/* Use Postman with Temporary header 'Connection' = 'close' instead of 'keepalive
+/* GET http:localhost:30002
 
 
 
 /* Illustrate self-healing without downtime for Pod to Pod Communications
 /* - continue to display the state of the objects
-/* - attach to the first pod if you are not already attached 
-/* - continue to send http requests from the first pod to the Cluster-IP/Port
-/* - Delete all the other pods while continuing to send http messages from the first pod
+/* - attach to the FIRST pod if you are not already attached 
+/* - continue to send http requests from the FIRST pod to the Cluster-IP/Port
+/* - Delete all the OTHER pods (NOT the FIRST Pod) while continuing to send http messages from the first pod
 /* - Note that there are no failures as the new pods begin to replace the old
-PS> kubectl delete amf-deploy-76b99cdd5d-bmjxv amf-deploy-76b99cdd5d-frqnd amf-deploy-76b99cdd5d-pxg6k amf-deploy-76b99cdd5d-xb5kb
+PST3# watch -t curl http://10.109.163.37:8080
+PST2> kubectl delete pods <all but FIRST pod>
+
 
 /* Illustrate self-healing without downtime from an external client
 /* - Browse to http://localhost:<NodePort>/api/hostname, e.g., http://localhost:30002/api/hostname
@@ -405,6 +419,24 @@ PS> kubectl delete amf-deploy-76b99cdd5d-bmjxv amf-deploy-76b99cdd5d-frqnd amf-d
 /* - Continue to display the state of the objects
 /* - Edit the Deployment object and change the version of the image to amf-ctr:2.0
 /* - Use the browser (or Postman) to verify the change at http://localhost:30002
+PST3> kubectl edit deployment amf-deploy  /* Inside the editor change the tag to 2.0
+
+/* Illustration Rollback with no downtime
+/* - This is essentially the reverse of Folling Updates!
+/* - Continue to display the state of the objects
+/* - Edit the Deployment object and change the version of the image to amf-ctr:1.0
+/* - Use the browser (or Postman) to verify the change at http://localhost:30002
+PST3> kubectl edit deployment amf-deploy  /* Inside the editor change the tag to 1.0
+
+
+/* Clean up the lab 
+PS> kubectl delete services --all
+PS> kubectl delete deployments --all
+PS> docker image rm amf-ctr:2.0 mmckinley-ctr:2.0
+
+/* Clean up the Docker Hub
+/* Browse at https://hub.docker.com
+/* Navigate to mmckinley5712/amf-ctr. Verify 1.0 tag is available and is current
 
 
 
