@@ -126,7 +126,32 @@ PST2> curl http://localhost:80/api/UEcontexts
 PST2> docker exec -it amf-ctr1 /bin/bash
 # echo $HOSTNAME
 
-/* Examine the previous output and note the IP address
+/* Display the local container IP address
+# ifconfig
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 172.17.0.2  netmask 255.255.0.0  broadcast 172.17.255.255
+        ether 02:42:ac:11:00:02  txqueuelen 0  (Ethernet)
+        RX packets 69  bytes 6969 (6.8 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 42  bytes 5645 (5.5 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        loop  txqueuelen 1  (Local Loopback)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+/* Examine the previous output and note the IP address (e.g., 172.17.0.2)
+
+
+Conduct tests between containers
+/* SME should setup two windows
+/*   - PST2 - attach to amf-ctr1
+/*   - PST3 - attach to amf-ctr2
+
 /* If we create another docker container, it will be assigned another IP address.
 /* Note that incoming packets are routed to the host IP, not to the container IP.
 /* Inside the host, the external IP and port is mapped to the internal IP and port (in this case 8080).
@@ -139,11 +164,23 @@ PST3> docker run -d --name amf-ctr2 -p 81:8080 amf-ctr:1.0
 /* Attach to the second container and run a shell command
 PS> docker exec -it amf-ctr2 /bin/sh 
 # echo $HOSTNAME 
+# ifconfig
+/* Exercise: eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 172.17.0.3  netmask 255.255.0.0  broadcast 172.17.255.255
+        ether 02:42:ac:11:00:03  txqueuelen 0  (Ethernet)
+        RX packets 15  bytes 1138 (1.1 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
 
-/* Conduct tests between containers
-/* SME should setup two windows
-/*   - PST2 - attach to amf-ctr1
-/*   - PST3 - attach to amf-ctr2
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        loop  txqueuelen 1  (Local Loopback)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+        
 
 /* From amf-ctr1 in PST2 curl to amf-ctr2 using host IP, port 80
 # curl http://192.168.0.146:81
@@ -328,7 +365,8 @@ PST2> kubectl apply -f .\amf-deploy.yml
 /* Delete one of the pods and observe that the pod is immediately replaced by another
 /* This is best illustrated with multiple terminals with one terminal 
 /* looping with the "get pods all -o wide' command and the other terminal doing the delete
-
+PST2> kubectl delete pod <pod/amf-deploy-76b99cdd5d-2gqng>
+/* Illustrate deletion of all pods
 PST2> kubectl delete pods --all
 /* Wait until all pods are terminated and replaced with new running pods
 
@@ -344,7 +382,7 @@ PST2> kubectl edit deployment amf-deploy
 /* Now show the connectivity failure between Pods when a Pod is destroyed:
 /* - Continue to display the state of the objects
 /* - Attach to one of the pods
-/* - Start send http requests to another pod using curl
+/* - Start sending http requests to another pod using curl
 /* - Delete the target pod
 /* - Continue to send http requests until failure
 
@@ -387,9 +425,17 @@ PST1> while(1){ kubectl get all -o wide;start-sleep -seconds 2;clear }
 /* Attach to a pod
 PST3> kubectl exec -it amf-deploy-76b99cdd5d-66sdj /bin/bash
 
+/* Illustrate load-balancing for internal clients
 /* Repeatedly send http messages from the first pod to the Cluster-IP/Port 
 /* and observe the hostname changes randomly
-# curl <cluster-ip>:8080
+# curl <cluster-ip>:8080/api/hostname
+[root@amf-deploy-76b99cdd5d-49mjk /]# curl 10.104.158.18:8080/api/hostname
+{"COMPUTERNAME":"amf-deploy-76b99cdd5d-49mjk"}[root@amf-deploy-76b99cdd5d-49mjk /]# curl 10.104.158.18:8080/api/hostname
+{"COMPUTERNAME":"amf-deploy-76b99cdd5d-49mjk"}[root@amf-deploy-76b99cdd5d-49mjk /]# curl 10.104.158.18:8080/api/hostname
+{"COMPUTERNAME":"amf-deploy-76b99cdd5d-lzvn4"}[root@amf-deploy-76b99cdd5d-49mjk /]# curl 10.104.158.18:8080/api/hostname
+{"COMPUTERNAME":"amf-deploy-76b99cdd5d-lzvn4"}[root@amf-deploy-76b99cdd5d-49mjk /]# curl 10.104.158.18:8080/api/hostname
+{"COMPUTERNAME":"amf-deploy-76b99cdd5d-p776h"}[root@amf-deploy-76b99cdd5d-49mjk /]# curl 10.104.158.18:8080/api/hostname
+{"COMPUTERNAME":"amf-deploy-76b99cdd5d-p776h"}[root@amf-deploy-76b99cdd5d-49mjk /]# curl 10.104.158.18:8080/api/hostname
 
 /* Illustrate load-balancing for external clients
 /* Use Postman with Temporary header 'Connection' = 'close' instead of 'keepalive
@@ -403,7 +449,7 @@ PST3> kubectl exec -it amf-deploy-76b99cdd5d-66sdj /bin/bash
 /* - continue to send http requests from the FIRST pod to the Cluster-IP/Port
 /* - Delete all the OTHER pods (NOT the FIRST Pod) while continuing to send http messages from the first pod
 /* - Note that there are no failures as the new pods begin to replace the old
-PST3# watch -t curl http://10.109.163.37:8080
+PST3# watch -t curl http://<Cluster IP>:8080
 PST2> kubectl delete pods <all but FIRST pod>
 
 

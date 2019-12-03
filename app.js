@@ -39,7 +39,7 @@ const UEcontexts= [
 
 // Display message and computername to client and to log
 app.get('/', function(req, res) {
-    console.log(message1, COMPUTERNAME);
+    console.log(message1, COMPUTERNAME, '\n');
     res.render('home.pug', { message1, COMPUTERNAME
   });
 });
@@ -53,13 +53,13 @@ app.get('/', function(req, res) {
 // Gets HOSTNAME/COMPUTERNAME
 app.get('/api/HOSTNAME',(req,res) => {
     res.json({COMPUTERNAME});
-    console.log('Hostname: ', COMPUTERNAME) ;
+    console.log('Hostname: ', COMPUTERNAME, '\n') ;
 });
 
 // Gets All UEcontexts
 app.get('/api/UEcontexts',(req,res) => {
     res.json(UEcontexts);
-    console.log('UEcontexts Request');
+    console.log('UEcontexts Request', '\n');
 });
 
 //app.listen(8080, () => console.log(process.env.COMPUTERNAME));
