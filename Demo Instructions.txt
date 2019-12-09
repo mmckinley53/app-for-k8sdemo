@@ -3,8 +3,20 @@ This is the demo preparation guide for the TP1025 Containers and Microservices i
 It is not intended that the SME perform all of the exercises in this demo during class.
 It is only intended to provide a guide for the SME to prepare for the Demo.
 
+/* Start with a clean lab 
+PS> kubectl delete services --all
+PS> kubectl delete deployments --all
+PS> docker image rm amf-ctr:1.0 mmckinley-ctr:1.0
+PS> docker image rm amf-ctr:2.0 mmckinley-ctr:2.0
+
+/* Clean up the Docker Hub
+/* Browse at https://hub.docker.com
+/* Navigate to mmckinley5712/amf-ctr. Verify 1.0 tag is available and is current
+
+
+
 /* General Instructions:
-Clone the repo locally 'git clone https://github.com/mmckinley53/app-for-k8sdemo.git'
+Optional: Clone the repo locally 'git clone https://github.com/mmckinley53/app-for-k8sdemo.git'
 Build Docker image 'docker image build -t amf-ctr:1.0 .' from within the root directory of the repo
 Perform Docker exercises found in Demo Instructions.txt
 Make any corrections, Build, test until good
@@ -56,8 +68,9 @@ PS> git clone https://github.com/mmckinley53/app-for-k8sdemo.git
 
 
 /***********************************************************************
-/* Docker Demo
+/* For Tech Primer, Start Here: Docker Demo
 /*======================================================================
+
 /* Display the application
 /* 
 /* Navigate to the new local repository and list the contents
@@ -67,50 +80,38 @@ PS> ls
 /* Display the app.js software and explain a little:
 /*  - on startup, write the hostname to the console 
 /*  - on receiving '/' URL then 
-/*        send 'Hello World' html, 
+/*        send 'Love Docker!' html, 
 /*        and write "Hostname is <Hostname>" to the console )
 /*  - on receiving '/api/hostname' URL then 
 /*        send '<Hostname>' html, 
 /*        and write "Hostname is <Hostname>" to the console )
-PS> cat app.js
+PS> cat app.js /* or use your favorite editor to display the file
+PS> cat home.pug /* or use your favorite editor to display the file
 
 /*========================================================================
 /* Docker Demo:
 /* Purpose: 
 /*    Illustrate use of Docker:
-/*      - Inspect the Dockerfile
-/*      - Containerize the app/build the image
-/*      - view the list of local docker images
-/*      - pull an existing docker container image from an external repository
-/*      - start it, 
-/*      - run commands inside it,
-/*      - communicate to it from a command line, 
-/*      - communicate to it from a browser,
-/*      - exit 
-/*      - list the running containers
-/*      - stop container
-/*      - remove container
+/*      - Examine the DockerFile
+/*      - Build a container image
+/*      - View the list of local docker images
+/*      - Run and Test the container
+/*      - Run another instance of the container and test
+/*      - Stop and Remove the containers
+/*      - Make a minor change in the application
+/*      - Build a new image with the updated app
+/*      - Run and Test the new container
+/*      - Run the old version and compare the differences
+/*      - Stop and Remove the old and new containers but keep the images
 
-/* Get the docker version
-PS> docker -v
-
-/* Inspect the Dockerfile
+/* View the Dockerfile with cat or an editor
 PS> cat Dockerfile
 
-/* View the local Docker images. 
-PS> docker images
-
-/* Make a minor change and re-Build an amf-ctr:1.0 docker container
+/* Build a local container image
 PS> docker build -t amf-ctr:1.0 .
 
-/* Display the images and verify that afm-ctr:1.0 has been created
+/* View list of Docker images to see if we already have an amf-ctr:1.0 image available locally
 PS> docker images
-
-/* Run the container and name it amf-ctr1
-PS> docker run -d --name amf-ctr1 -p 80:8080 amf-ctr:1.0
-
-/* Display the container
-PS> docker container ls -a
 
 /* Test the container by entering these urls into a browser
 /* http://localhost:80/
@@ -183,16 +184,16 @@ lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
         
 
 /* From amf-ctr1 in PST2 curl to amf-ctr2 using host IP, port 80
-# curl http://192.168.0.146:81
+# curl http://192.168.150.225:81
 
 /* From PST3 curl to amf-ctr1 using host IP, port 81
-# curl http://192.168.0.146:80
+# curl http://192.168.150.225:80
 
 /* Use the browser to test the first container port 80
-/* Browse at http://192.168.0.146:80
+/* Browse at http://192.168.150.225:80
 
 /* Use the browser to test the second container port 81
-/* Browse at http://192.168.0.146:81
+/* Browse at http://192.168.150.225:81
 
 /* Exit both containers (not shown) and Stop both containers
 PST2> docker stop amf-ctr1 amf-ctr2
@@ -207,32 +208,16 @@ PS> docker rm amf-ctr1 amf-ctr2
 PS> docker container ls -a
 
 
-/*==================================================================================
-/* In this section, you will save tested amf-ctr1 image to the remote repository at Docker Hub
-
-/* Login to Docker Hub
-PS> docker login
-
-/* Tag the image with 1.0 and identify your repository 
-PS> docker image tag amf-ctr:1.0 mmckinley5712/amf-ctr:1.0
-
-/* Check to see that the image has been stored in the local repository with the new tag
-PS> docker images
-
-/* Store the image in Docker Hub
-PS> docker image push mmckinley5712/amf-ctr:1.0
-
-/* Verify the image has been stored in your repository via the Docker Hub website 
-/* Browse at https://hub.docker.com
-/* Navigate to mmckinley5712/amf-ctr. Verify 1.0 tag is available and is current
-
 /*===================================================================================
 /* In this section you will update the app.
 /* Then you will build a new image with the updates using a different tag.
 /* Then you will test it and then push the new version amf-ctr:2.0 to Docker Hub.
 
-/* Make a minor change in the app.js file (e.g., Change "Hello World" to "Love Docker")
+/* Make a minor change in the app.js file (e.g., Change "Love Docker" to "Love Kubernetes")
 /* Use your preferred editor to make the change in app.js
+
+/* Use cat or an editor to display the Dockerfile
+PS> cat Dockerfile
 
 /* Build the updated docker image with a new tag (e.g., 2.0)
 PS> docker build -t amf-ctr:2.0 .
@@ -245,13 +230,13 @@ PS> docker run -d --name amf-ctr2 -p 81:8080 amf-ctr:2.0
 
 /* Verify the changes are correct (browser displays "Love Docker")
 /* Browse to http://localhost:81
-/* This should display "Love Docker" on one line and the hostname below it
+/* This should display "Love Kubernetes" on one line and the hostname below it
 
 /* Start amf-ctr:1.0 and use name amf-ctr1, port 80, image amf-ctr:1.0
 PS> docker run -d --name amf-ctr1 -p 80:8080 amf-ctr:1.0
 
 /* In another Browser window, browse to http://localhost:80
-/* This should display "Hello World" on one line and the hostname below it
+/* This should display "Love Docker" on one line and the hostname below it
 /* Note the difference in hostname. This will be used in the kubernetes exercise
 
 /* After verification, stop and remove the updated containers
@@ -280,13 +265,13 @@ PS> docker login
 PS> docker images
 
 /* Tag the image with 2.0 and identify your repository 
-PS> docker image tag amf-ctr:2.0 mmckinley5712/amf-ctr:2.0
+PS> docker image tag amf-ctr:2.0 amf-ctr:2.0
 
 /* Check to see that the image has been stored in the local repository with the new tag
 PS> docker images
 
 /* Store the image in Docker Hub
-PS> docker image push mmckinley5712/amf-ctr:2.0
+PS> docker image push amf-ctr:2.0
 
 /* Verify the image has been stored in your repository via the Docker Hub website 
 /* Browse at https://hub.docker.com
@@ -393,8 +378,9 @@ PST3> kubectl exec -it <pod-name> /bin/bash
 /* Start sending http requests to another pod using curl
 # curl http://<IP Address of target pod>:8080
 
-/* Continue sending http requests as you delete the target pod
+/* Continue sending http requests as you delete the target pod. The curl command will eventually fail.
 PST2> kubectl delete pod <target pod>
+
 
 
 
@@ -426,10 +412,10 @@ PST1> while(1){ kubectl get all -o wide;start-sleep -seconds 2;clear }
 PST3> kubectl exec -it amf-deploy-76b99cdd5d-66sdj /bin/bash
 
 /* Illustrate load-balancing for internal clients
-/* Repeatedly send http messages from the first pod to the Cluster-IP/Port 
+/* Repeatedly send http messages from the first pod to the <Cluster-IP>:<port>/api/hostname 
 /* and observe the hostname changes randomly
 # curl <cluster-ip>:8080/api/hostname
-[root@amf-deploy-76b99cdd5d-49mjk /]# curl 10.104.158.18:8080/api/hostname
+[root@amf-deploy-76b99cdd5d-49mjk /]# curl <Custer-IP>:<port>/api/hostname /* e.g., curl 
 {"COMPUTERNAME":"amf-deploy-76b99cdd5d-49mjk"}[root@amf-deploy-76b99cdd5d-49mjk /]# curl 10.104.158.18:8080/api/hostname
 {"COMPUTERNAME":"amf-deploy-76b99cdd5d-49mjk"}[root@amf-deploy-76b99cdd5d-49mjk /]# curl 10.104.158.18:8080/api/hostname
 {"COMPUTERNAME":"amf-deploy-76b99cdd5d-lzvn4"}[root@amf-deploy-76b99cdd5d-49mjk /]# curl 10.104.158.18:8080/api/hostname
@@ -745,7 +731,7 @@ PS> git pull
 /* To run a command continuously from one of the terminal windows in cmder:
 while(1){ kubectl get pods;start-sleep -seconds 2;clear }
 
-while(1){ curl 192.168.0.146:30002/api/hostname;start-sleep -seconds 2;clear }
+while(1){ curl 192.168.150.225:30002/api/hostname;start-sleep -seconds 2;clear }
 
 while(1){ kubectl logs --selector app=amf ;start-sleep -seconds 2;clear }
 
