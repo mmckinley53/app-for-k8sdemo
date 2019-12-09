@@ -9,7 +9,7 @@ const app = express();
 app.set('views', 'views');
 app.set('view engine', 'pug');
 
-var message1 = 'Love Docker!'
+var message1 = 'Love Kubernetes!'
 const COMPUTERNAME = process.env.COMPUTERNAME || process.env.HOSTNAME
 const PORT = process.env.PORT || 8080
 

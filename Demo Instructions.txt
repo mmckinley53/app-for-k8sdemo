@@ -117,7 +117,7 @@ PS> docker build -t amf-ctr:1.0 .
 /* View list of Docker images to see if we already have an amf-ctr:1.0 image available locally
 PS> docker images
 
-/* Run the docker container
+/* Run the docker container 
 PS> docker run -d --name amf-ctr1 -p 80:8080 amf-ctr:1.0
 
 /* Test the container by entering these urls into a browser
@@ -191,16 +191,16 @@ lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
         
 
 /* From amf-ctr1 in PST2 curl to amf-ctr2 using host IP, port 80
-# curl http://192.168.150.225:81
+# curl http://172.17.0.3:8080
 
 /* From PST3 curl to amf-ctr1 using host IP, port 81
-# curl http://192.168.150.225:80
+# curl http://172.17.0.2:8080
 
 /* Use the browser to test the first container port 80
-/* Browse at http://192.168.150.225:80
+/* Browse at http://localhost:80
 
 /* Use the browser to test the second container port 81
-/* Browse at http://192.168.150.225:81
+/* Browse at http://localhost:81
 
 /* Exit both containers (not shown) and Stop both containers
 PST2> docker stop amf-ctr1 amf-ctr2
