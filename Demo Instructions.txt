@@ -98,7 +98,8 @@ PS> cat home.pug /* or use your favorite editor to display the file
 /*      - Examine the DockerFile
 /*      - Build a container image
 /*      - View the list of local docker images
-/*      - Run and Test the container
+/*      - Run the container
+/*      - Test the container
 /*      - Run another instance of the container and test
 /*      - Stop and Remove the containers
 /*      - Make a minor change in the application
@@ -115,6 +116,9 @@ PS> docker build -t amf-ctr:1.0 .
 
 /* View list of Docker images to see if we already have an amf-ctr:1.0 image available locally
 PS> docker images
+
+/* Run the docker container
+PS> docker run -d --name amf-ctr1 -p 80:8080 amf-ctr:1.0
 
 /* Test the container by entering these urls into a browser
 /* http://localhost:80/
