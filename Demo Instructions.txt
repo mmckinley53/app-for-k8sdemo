@@ -6,8 +6,10 @@ It is only intended to provide a guide for the SME to prepare for the Demo.
 /* Start with a clean lab 
 PS> kubectl delete services --all
 PS> kubectl delete deployments --all
-PS> docker image rm amf-ctr:1.0 mmckinley-ctr:1.0
-PS> docker image rm amf-ctr:2.0 mmckinley-ctr:2.0
+PS> docker image rm amf-ctr:1.0 
+PS> docker image rm mmckinley5712/amf-ctr:1.0
+PS> docker image rm amf-ctr:2.0 
+PS> docker image mmckinley5712/amf-ctr:2.0
 
 /* Clean up the Docker Hub
 /* Browse at https://hub.docker.com
