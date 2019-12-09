@@ -264,14 +264,14 @@ PS> docker login
 /* Verify that amf-ctr:2.0 is in the local repository
 PS> docker images
 
-/* Tag the image with 2.0 and identify your repository 
-PS> docker image tag amf-ctr:2.0 amf-ctr:2.0
+/* Tag the image with 2.0 and identify your local repository 
+PS> docker image tag amf-ctr:2.0 mmckinley5712/amf-ctr:2.0
 
 /* Check to see that the image has been stored in the local repository with the new tag
 PS> docker images
 
 /* Store the image in Docker Hub
-PS> docker image push amf-ctr:2.0
+PS> docker image push mmckinley5712/amf-ctr:2.0
 
 /* Verify the image has been stored in your repository via the Docker Hub website 
 /* Browse at https://hub.docker.com
