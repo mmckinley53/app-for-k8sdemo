@@ -11,9 +11,10 @@ PS> docker image rm mmckinley5712/amf-ctr:1.0
 PS> docker image rm amf-ctr:2.0 
 PS> docker image mmckinley5712/amf-ctr:2.0
 
-/* Clean up the Docker Hub
+/* Optional: Clean up the Docker Hub
 /* Browse at https://hub.docker.com
-/* Navigate to mmckinley5712/amf-ctr. Verify 1.0 tag is available and is current
+/* Navigate to mmckinley5712/amf-ctr. Verify 1.0 tag is available and is current 
+/* Optional: Go to Settings Tab and delete repository
 
 
 
