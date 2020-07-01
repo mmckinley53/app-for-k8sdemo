@@ -19,7 +19,9 @@ PS> docker image mmckinley5712/amf-ctr:2.0
 
 
 /* General Instructions:
-Optional: Clone the repo locally 'git clone https://github.com/mmckinley53/app-for-k8sdemo.git'
+If you don't already have the app-for-k8sdemo folder then : 
+        - View the app-for-k8sdemo source code on gihub: https://github.com/mmckinley53/app-for-k8sdemo
+        - Clone the repo locally 'git clone https://github.com/mmckinley53/app-for-k8sdemo.git'
 Build Docker image 'docker image build -t amf-ctr:1.0 .' from within the root directory of the repo
 Perform Docker exercises found in Demo Instructions.txt
 Make any corrections, Build, test until good
@@ -34,7 +36,11 @@ Perform Kubernetes exercises found in Demo Instructions.txt
 5. Terminal Emulator besides CMD (e.g., cmder, MobiXterm, etc.)
 
 /* Optional: To see a window with 3 horizontal cmder terminals:
-1. Start cmder in administrative mode (start, type in 'cmder', search displays cmder icon, right click on cmder icon, select "Run as administrator")
+1. Start cmder in administrative mode 
+  a. Click on Windows Start, 
+  b. Type in 'cmder', 
+  c. Right click on cmder icon, 
+  d. Select "Run as administrator"
 2. Click on Cmder icon upper left corner of terminal. 
 3. From pull-down menu select "Active Console":"Restart or Duplicate":"Split to Bottom"
 4. To start Powershell in one of the terminals just type "powershell" at the cmder prompt (lamba)
@@ -53,7 +59,9 @@ https://product.hubspot.com/blog/git-and-github-tutorial-for-beginners
 
 
 /*=====================================================================
-/* Pull the application folder from the remotes source control (github)
+/* General: 
+/* If you do not already have a copy of the "app-for-k8sdemo" folder, then
+/*   - Pull the application folder from the remotes source control (github)
 /* 
 /*  git clone is basically a combination of:
 /*  - git init (create the local repository)
@@ -65,7 +73,7 @@ https://product.hubspot.com/blog/git-and-github-tutorial-for-beginners
 /* In your terminal emulator, navigate to a folder that you want your working folder
 PS> cd /user/<username> 
 
-/* Pull the application folder from github
+/* If you do not already have a copy of the "app-for-k8sdemo" folder, then pull the application folder from github
 PS> git clone https://github.com/mmckinley53/app-for-k8sdemo.git
 
 
@@ -81,13 +89,19 @@ PS> cd C:\users\mmckinley\app-for-k8sdemo\
 PS> ls
 
 /* Display the app.js software and explain a little:
-/*  - on startup, write the hostname to the console 
-/*  - on receiving '/' URL then 
-/*        send 'Love Docker!' html, 
-/*        and write "Hostname is <Hostname>" to the console )
+/*  - Assign message1 to a string like 'Love Docker' or 'Love Kubernetes'
+/*  - Assign COMPUTERNAME to HOSTNAME of current system (container or native)
+/*  - Assign PORT = 8080
+/*  - Create a list of ue contexts and assign some initial values
+/*  - On receiving '/' URL then 
+/*        Send <message1> and <COMPUTERNAME> to the console
+/*        Send html response with <message1> and <COMPUTERNAME> to client 
 /*  - on receiving '/api/hostname' URL then 
-/*        send '<Hostname>' html, 
-/*        and write "Hostname is <Hostname>" to the console )
+/*        send html response with <COMPUTERNAME>, 
+/*        and write <COMPUTERNAME> to the console )
+/*  - on receiving '/api/UEcontexts' URL then 
+/*        send <UEcontexts> in body of html in json format, 
+/*        and write list of UEcontexts to the console )
 PS> cat app.js /* or use your favorite editor to display the file
 PS> cat home.pug /* or use your favorite editor to display the file
 
@@ -114,13 +128,17 @@ PS> cat Dockerfile
 /* Build a local container image
 PS> docker build -t amf-ctr:1.0 .
 
-/* View list of Docker images to see if we already have an amf-ctr:1.0 image available locally
+/* View list of Docker images to see if we now have an amf-ctr:1.0 image available locally
 PS> docker images
 
-/* Run the docker container 
+/* Start the docker container in the background (-d), name it amf-ctr1, map port 80 to 8080,
+/* using image amf-ctr:1.0
 PS> docker run -d --name amf-ctr1 -p 80:8080 amf-ctr:1.0
 
-/* Test the container by entering these urls into a browser
+/* Display the running container
+PS> docker container ls
+
+/* Test the container by entering these urls into a browser (on the same machine)
 /* http://localhost:80/
 /* http://localhost:80/api/hostname
 /* http://localhost:80/api/UEcontexts
@@ -155,7 +173,7 @@ lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
 /* Examine the previous output and note the IP address (e.g., 172.17.0.2)
 
 
-Conduct tests between containers
+Exercise: Conduct tests between containers
 /* SME should setup two windows
 /*   - PST2 - attach to amf-ctr1
 /*   - PST3 - attach to amf-ctr2
@@ -169,8 +187,11 @@ Conduct tests between containers
 /* Note the external port is different from the first one
 PST3> docker run -d --name amf-ctr2 -p 81:8080 amf-ctr:1.0
 
+/* List the containers again. Note that there are two containers named amf-ctr1 and amf-ctr2
+docker container ls -a
+
 /* Attach to the second container and run a shell command
-PS> docker exec -it amf-ctr2 /bin/sh 
+PS> docker exec -it amf-ctr2 /bin/bash
 # echo $HOSTNAME 
 # ifconfig
 /* Exercise: eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
@@ -190,16 +211,10 @@ lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
         
 
-/* From amf-ctr1 in PST2 curl to amf-ctr2 using host IP, port 80
-# curl http://172.17.0.3:8080
-
-/* From PST3 curl to amf-ctr1 using host IP, port 81
-# curl http://172.17.0.2:8080
-
-/* Use the browser to test the first container port 80
+/* Use the browser to test the first container port 80, record the Hostname
 /* Browse at http://localhost:80
 
-/* Use the browser to test the second container port 81
+/* Use the browser to test the second container port 81, record the Hostname
 /* Browse at http://localhost:81
 
 /* Exit both containers (not shown) and Stop both containers
@@ -305,6 +320,9 @@ PS> docker image push mmckinley5712/amf-ctr:2.0
 /* Display the pod manifest file
 PS> cat amf-pod.yml
 
+/* List the running Pods 
+PS> kubectl get pods
+
 /* Create a pod
 PS> kubectl apply -f amf-pod.yml
 
@@ -327,7 +345,7 @@ PS> kubectl exec amf-pod ifconfig
 PS> kubectl exec -it amf-pod /bin/bash
 #
 
-/* Check Pod connectivity
+/* Check Local Pod connectivity
 # curl localhost:8080
 # curl localhost:8080/api/hostname
 # curl localhost:8080/api/UEcontexts
@@ -354,40 +372,49 @@ PST1> while(1){ kubectl get all -o wide;start-sleep -seconds 2;clear }
 PST2> kubectl apply -f .\amf-deploy.yml
 
 /* Illustrate Self-Healing with Deployments/Replications
-/* Delete one of the pods and observe that the pod is immediately replaced by another
+/* Delete one of the pods and observe that the pod is immediately replaced by another pod
 /* This is best illustrated with multiple terminals with one terminal 
 /* looping with the "get pods all -o wide' command and the other terminal doing the delete
-PST2> kubectl delete pod <pod/amf-deploy-76b99cdd5d-2gqng>
+PST2> kubectl delete pod <pod name>  /* e.g., amf-deploy-76b99cdd5d-2gqng
 /* Illustrate deletion of all pods
 PST2> kubectl delete pods --all
 /* Wait until all pods are terminated and replaced with new running pods
 
 /* Illustrate Scaling with Deployments/Replications
 /* - Continue to display the state of the objects
-/* - Edit the Deployments object and increment the 'replicas' count, save and close
+/* - Edit the Deployments object and increment the 'replicas' count, save and exit
 /* - Observe the increase in the number of replicas
 /* - To scale down, edit the Deployments object and decrement the replica count, save, and close
 
-/* Edit the Deployments object, and increment the replicas count, save, and close
+/* This command will allow you to edit the Deployments object.
+/* When the amf-deploy object is displayed, increment the replicas count, save, and close
 PST2> kubectl edit deployment amf-deploy
 
-/* Now show the connectivity failure between Pods when a Pod is destroyed:
-/* - Continue to display the state of the objects
-/* - Attach to one of the pods
-/* - Start sending http requests to another pod using curl
-/* - Delete the target pod
-/* - Continue to send http requests until failure
+/* Illustrate the connectivity between pods:
+/* - Continue to display the state of the objects in PST1
+/* - Attach to one of the pods in PST2
+/* - Ping one of the other pods
 
 /* Attach to one of the pods
-PST3> kubectl exec -it <pod-name> /bin/bash
+PST2> kubectl exec -it <pod-name> /bin/bash
 # 
 
 /* Start sending http requests to another pod using curl
 # curl http://<IP Address of target pod>:8080
+# ping <IP Address of target pod>
 
-/* Continue sending http requests as you delete the target pod. The curl command will eventually fail.
-PST2> kubectl delete pod <target pod>
 
+/* Now show the connectivity failure between Pods when a Pod is destroyed:
+/* - Continue to display the state of the objects
+/* - Delete the target pod
+/* - Continue to send ping requests and observe the connectivity failure
+
+/* Continue sending ping requests as you delete the target pod. The ping command will eventually fail.
+PST3> kubectl delete pod <target pod>
+
+/* Observe that although a new pod is created to to take the place of the deleted pod, the
+/* ping command is not able to recover and will begin to receive the Destination Host 
+/* Unreachable error
 
 
 
@@ -405,7 +432,7 @@ PST3> cat amf-svc.yml  /* or display with your editor
 /* Create a Service with the selector (app:amf)
 PST3> kubectl apply -f .\amf-svc.yml
 
-/* Continuously display the state of all objects
+/* If not already implemented then use the following to continuously display the state of all kubernetes objects
 /* Note the new information in the Service object: Cluster-IP/Port and NodePort
 PST1> while(1){ kubectl get all -o wide;start-sleep -seconds 2;clear }
 
@@ -415,24 +442,27 @@ PST1> while(1){ kubectl get all -o wide;start-sleep -seconds 2;clear }
 /* - Send several messages repeatedly and notice that the hostname changes as a 
 /*   result of the random load-balancing provided by the Service
 
-/* Attach to a pod
-PST3> kubectl exec -it amf-deploy-76b99cdd5d-66sdj /bin/bash
+/* If you are not already attached to a pod, the attach to a pod
+PST2> kubectl exec -it <pod-name> /bin/bash
 
-/* Illustrate load-balancing for internal clients
+/* Illustrate load-balancing for INTERNAL clients
 /* Repeatedly send http messages from the first pod to the <Cluster-IP>:<port>/api/hostname 
 /* and observe the hostname changes randomly
-# curl <cluster-ip>:8080/api/hostname
-[root@amf-deploy-76b99cdd5d-49mjk /]# curl <Custer-IP>:<port>/api/hostname /* e.g., curl 
-{"COMPUTERNAME":"amf-deploy-76b99cdd5d-49mjk"}[root@amf-deploy-76b99cdd5d-49mjk /]# curl 10.104.158.18:8080/api/hostname
-{"COMPUTERNAME":"amf-deploy-76b99cdd5d-49mjk"}[root@amf-deploy-76b99cdd5d-49mjk /]# curl 10.104.158.18:8080/api/hostname
-{"COMPUTERNAME":"amf-deploy-76b99cdd5d-lzvn4"}[root@amf-deploy-76b99cdd5d-49mjk /]# curl 10.104.158.18:8080/api/hostname
-{"COMPUTERNAME":"amf-deploy-76b99cdd5d-lzvn4"}[root@amf-deploy-76b99cdd5d-49mjk /]# curl 10.104.158.18:8080/api/hostname
-{"COMPUTERNAME":"amf-deploy-76b99cdd5d-p776h"}[root@amf-deploy-76b99cdd5d-49mjk /]# curl 10.104.158.18:8080/api/hostname
-{"COMPUTERNAME":"amf-deploy-76b99cdd5d-p776h"}[root@amf-deploy-76b99cdd5d-49mjk /]# curl 10.104.158.18:8080/api/hostname
+# curl <cluster-ip>:<cluster-port>/api/hostname
 
-/* Illustrate load-balancing for external clients
-/* Use Postman with Temporary header 'Connection' = 'close' instead of 'keepalive
-/* GET http:localhost:30002
+/* Here is an example of what you will see. Note that the message is load balanced amongst the different pods randomly
+PST2 C:\Users\mmckinley\app-for-k8sdemo> kubectl exec -it amf-deploy-76b99cdd5d-d5fkq /bin/bash
+[root@amf-deploy-76b99cdd5d-d5fkq /]# curl 10.97.17.82:8080/api/hostname
+{"COMPUTERNAME":"amf-deploy-76b99cdd5d-tbspv"}[root@amf-deploy-76b99cdd5d-d5fkq /]# curl 10.97.17.82:8080/api/hostname
+{"COMPUTERNAME":"amf-deploy-76b99cdd5d-d5fkq"}[root@amf-deploy-76b99cdd5d-d5fkq /]# curl 10.97.17.82:8080/api/hostname
+{"COMPUTERNAME":"amf-deploy-76b99cdd5d-s8mxf"}[root@amf-deploy-76b99cdd5d-d5fkq /]# curl 10.97.17.82:8080/api/hostname
+{"COMPUTERNAME":"amf-deploy-76b99cdd5d-tbspv"}[root@amf-deploy-76b99cdd5d-d5fkq /]#
+
+/* Illustrate load-balancing for EXTERNAL clients
+/* Send a GET message to the <External IP>:<NodePort>
+/* Use Postman with Temporary header 'Connection' = 'close' instead of 'keepalive'
+/* Do this several times and observe that the message is load balanced amongst the different pods randomly
+/* Example: GET http:localhost:30002
 
 
 
@@ -442,8 +472,8 @@ PST3> kubectl exec -it amf-deploy-76b99cdd5d-66sdj /bin/bash
 /* - continue to send http requests from the FIRST pod to the Cluster-IP/Port
 /* - Delete all the OTHER pods (NOT the FIRST Pod) while continuing to send http messages from the first pod
 /* - Note that there are no failures as the new pods begin to replace the old
-PST3# watch -t curl http://<Cluster IP>:8080
-PST2> kubectl delete pods <all but FIRST pod>
+PST2# watch -t curl http://<Cluster IP>:8080/api/hostname
+PST3> kubectl delete pods <all but FIRST pod>
 
 
 /* Illustrate self-healing without downtime from an external client
@@ -457,89 +487,20 @@ PST2> kubectl delete pods <all but FIRST pod>
 /* Illustrate Rolling Update with no downtime
 /* - Continue to display the state of the objects
 /* - Edit the Deployment object and change the version of the image to amf-ctr:2.0
-/* - Use the browser (or Postman) to verify the change at http://localhost:30002
+/* - Use Postman to verify the change at http://localhost:30002 - i.e., should see "Love Kubernetes"
 PST3> kubectl edit deployment amf-deploy  /* Inside the editor change the tag to 2.0
 
-/* Illustration Rollback with no downtime
-/* - This is essentially the reverse of Folling Updates!
+/* Illustrate Rollback with no downtime
+/* - This is essentially the reverse of Rolling Updates!
 /* - Continue to display the state of the objects
 /* - Edit the Deployment object and change the version of the image to amf-ctr:1.0
-/* - Use the browser (or Postman) to verify the change at http://localhost:30002
+/* - Use the Postman to verify the change at http://localhost:30002 - i.e., should see "Love Docker"
 PST3> kubectl edit deployment amf-deploy  /* Inside the editor change the tag to 1.0
 
 
 /* Clean up the lab 
 PS> kubectl delete services --all
 PS> kubectl delete deployments --all
-PS> docker image rm amf-ctr:2.0 mmckinley-ctr:2.0
-
-/* Clean up the Docker Hub
-/* Browse at https://hub.docker.com
-/* Navigate to mmckinley5712/amf-ctr. Verify 1.0 tag is available and is current
-
-
-
-
-
-
-
-
-
-
-/* Show that you cannot ping to the pods directly from an external client using these addresses
-PS> ping 10.1.0.185
-
-/* Try to curl to the container - fails
-PS> curl http://localhost:80
-
-
-
-
-
-
-
-
-/*-------------------------------------------
-/* Pods
-/* - Display Pod manifest file
-/* - Create a pod
-/* - List running pods
-/* - List running pods with IP address info 
-/* - List a particular Pod
-/* - Describe a Pod
-/* - Execute commands in the container
-/* - Cleanup the Pod
-
-
-
-
-/*------------------------------------------
-/* Deployments
-/* - Display Deployment manifest file
-/* - Create a Deployment
-/* - Display the Deployment/Replications
-/* 
-
-
-
-
-/*------------------------------------------
-/* Self-Healing
-/* Illustrate Self-Healing
-
-/*------------------------------------------
-/* Scaling
-/* Illustrate Scaling
-
-/*-----------------------------------------
-/* Rolling updates
-/* Illustrate rolling updates
-
-/*-----------------------------------------
-/* Rollback
-/* Illustrate Rollback
-
-
 
 
 
